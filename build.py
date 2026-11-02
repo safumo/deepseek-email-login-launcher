@@ -14,8 +14,9 @@ ROOT = Path(__file__).parent
 script = (ROOT / "launcher.applescript").read_text(encoding="utf-8")
 template = (ROOT / "site" / "index.html").read_text(encoding="utf-8")
 
-# 注意：Script Editor 对 URL host 做大小写敏感匹配，必须全小写 com.apple.scripteditor
-# （不是 Bundle ID 的 com.apple.ScriptEditor2，大写会导致打开空白文档）
+# Script Editor matches the applescript:// host case-sensitively:
+# it must be the all-lowercase "com.apple.scripteditor", not the Bundle ID
+# form "com.apple.ScriptEditor2" (which opens a blank document).
 url = "applescript://com.apple.scripteditor?action=new&script=" + quote(script)
 out = template.replace("{{APPLESCRIPT_URL}}", url).replace(
     "{{APPLESCRIPT_SOURCE}}", escape(script)
@@ -27,7 +28,6 @@ if "{{APPLESCRIPT" in out:
 dist = ROOT / "dist"
 dist.mkdir(exist_ok=True)
 (dist / "index.html").write_text(out, encoding="utf-8")
-# 供非 Safari 浏览器下载的启动器文件
 for name in ("launcher.applescript", "launcher.bat"):
     (dist / name).write_bytes((ROOT / name).read_bytes())
 print(f"built dist/index.html ({len(out)} bytes, applescript URL {len(url)} chars)")
