@@ -4,7 +4,7 @@ GitHub Pages 静态站点：引导 macOS 用户通过 `applescript://` URL 直�
 
 ## 工作原理
 
-1. `launcher.applescript` / `launcher.bat` 是脚本源：动态解析 CloudFront 当前 IP → 写入 hosts → 打开浏览器登录页。
+1. `launcher.applescript` / `launcher.bat` 是脚本源：动态解析 CloudFront 当前 IP → 写入 hosts → 用系统默认浏览器打开登录页（保留用户已保存的登录态）。
 2. `build.py` 把 AppleScript URL 编码为 `applescript://com.apple.scripteditor?action=new&script=...`，烘焙进 `site/index.html` 生成 `dist/index.html`，并把两个启动器文件拷入 `dist/` 供下载。
 3. GitHub Actions（`.github/workflows/pages.yml`）在 push 到 `main` 时构建并部署到 GitHub Pages。
 

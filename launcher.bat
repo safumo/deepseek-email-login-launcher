@@ -47,29 +47,23 @@ move /y "%HOSTS%.tmp" "%HOSTS%" >nul
 ipconfig /flushdns >nul
 echo [完成] hosts 已写入：%CFIP% %DOMAIN%
 
-rem ---------- 3. 检测已安装的浏览器并打开登录页 ----------
+rem ---------- 3. 检测已安装的浏览器（仅提示），用系统默认浏览器打开登录页 ----------
 set "BROWSER="
-if exist "%ProgramFiles%\Google\Chrome\Application\chrome.exe"        set "BROWSER=%ProgramFiles%\Google\Chrome\Application\chrome.exe"
-if exist "%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"  set "BROWSER=%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"
-if exist "%LocalAppData%\Google\Chrome\Application\chrome.exe"       set "BROWSER=%LocalAppData%\Google\Chrome\Application\chrome.exe"
-
+if exist "%ProgramFiles%\Google\Chrome\Application\chrome.exe"        set "BROWSER=Chrome"
+if exist "%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"  set "BROWSER=Chrome"
+if exist "%LocalAppData%\Google\Chrome\Application\chrome.exe"       set "BROWSER=Chrome"
 if not defined BROWSER (
-    if exist "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe" set "BROWSER=%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"
-    if exist "%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"      set "BROWSER=%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"
+    if exist "%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe" set "BROWSER=Edge"
+    if exist "%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"      set "BROWSER=Edge"
 )
-
 if not defined BROWSER (
-    if exist "%ProgramFiles%\Mozilla Firefox\firefox.exe"                set "BROWSER=%ProgramFiles%\Mozilla Firefox\firefox.exe"
-    if exist "%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"           set "BROWSER=%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe"
+    if exist "%ProgramFiles%\Mozilla Firefox\firefox.exe"      set "BROWSER=Firefox"
+    if exist "%ProgramFiles(x86)%\Mozilla Firefox\firefox.exe" set "BROWSER=Firefox"
 )
+if defined BROWSER (echo [信息] 检测到已安装浏览器：%BROWSER%)
 
-if defined BROWSER (
-    echo [信息] 使用浏览器：%BROWSER%
-    start "" "%BROWSER%" "%TARGET%"
-) else (
-    echo [信息] 未检测到 Chrome/Edge/Firefox，使用系统默认浏览器。
-    start "" "%TARGET%"
-)
+rem 使用默认浏览器打开，保留用户在常用浏览器中的登录态/密码
+start "" "%TARGET%"
 
 echo.
 echo 若页面显示邮箱/Google 登录表单即成功；仍是 +86 短信说明当前网络无海外出口。
