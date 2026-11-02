@@ -4,21 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DeepSeek 海外邮箱登录启动器</title>
-<meta name="description" content="一键引导 Mac 打开 AppleScript，将 platform.deepseek.com 指向海外节点，显示邮箱 / Google 登录界面。">
+<meta name="description" content="引导 macOS / Windows 用户将 platform.deepseek.com 指向海外节点，显示邮箱 / Google 登录界面而非 +86 短信登录。">
 <style>
   :root { --fg: #1a1a1a; --muted: #6b6b6b; --accent: #4d6bfe; --border: #e3e3e3; --bg: #fdfdfd; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, "SF Pro SC", "PingFang SC", "Helvetica Neue", sans-serif; color: var(--fg); background: var(--bg); line-height: 1.7; }
+  body { margin: 0; font-family: -apple-system, "SF Pro SC", "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif; color: var(--fg); background: var(--bg); line-height: 1.7; }
   main { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
   h1 { font-size: 26px; margin: 0 0 8px; }
   h2 { font-size: 18px; margin: 40px 0 12px; padding-top: 24px; border-top: 1px solid var(--border); }
   p.sub { color: var(--muted); margin: 0 0 32px; }
   .cta { display: block; text-align: center; background: var(--accent); color: #fff; text-decoration: none; font-size: 17px; font-weight: 600; padding: 16px 24px; border-radius: 12px; margin: 8px 0 4px; }
   .cta:hover { opacity: .92; }
+  .cta.secondary { background: #fff; color: var(--fg); border: 1px solid var(--border); }
   .cta-note { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 32px; }
   ol.steps { padding-left: 22px; }
   ol.steps li { margin: 8px 0; }
-  code, pre { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; }
+  code, pre { font-family: ui-monospace, "SF Mono", Consolas, Menlo, monospace; font-size: 13px; }
   code { background: #f2f2f2; padding: 2px 6px; border-radius: 6px; }
   pre { background: #f6f6f6; border: 1px solid var(--border); border-radius: 10px; padding: 14px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
   .copy-btn { margin-top: 8px; background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; }
@@ -26,6 +27,8 @@
   details { margin: 12px 0; }
   summary { cursor: pointer; font-weight: 600; }
   .warn { background: #fff8e6; border: 1px solid #f0dfa0; border-radius: 10px; padding: 12px 16px; font-size: 14px; margin: 16px 0; }
+  .platform { display: none; }
+  .platform.active { display: block; }
   footer { margin-top: 48px; color: var(--muted); font-size: 13px; }
   a { color: var(--accent); }
 </style>
@@ -33,18 +36,62 @@
 <body>
 <main>
   <h1>DeepSeek 海外邮箱登录启动器</h1>
-  <p class="sub">适用于 macOS + Safari。点击按钮即可在 Mac 的「脚本编辑器」中打开启动脚本，无需下载任何文件。</p>
+  <p class="sub">自动识别你的系统与浏览器，给出对应的免下载启动方式。</p>
 
-  <a class="cta" href="{{APPLESCRIPT_URL}}">在 Mac 上打开启动器</a>
-  <p class="cta-note">需要在 Mac 上的 Safari / 默认浏览器中打开本页才能唤起</p>
+  <!-- macOS + Safari：applescript:// 直接唤起脚本编辑器 -->
+  <section id="sec-mac-safari" class="platform">
+    <a class="cta" href="{{APPLESCRIPT_URL}}">在 Mac 上打开启动器</a>
+    <p class="cta-note">点击后「脚本编辑器」会自动载入脚本（本方式仅 Safari 可用）</p>
+    <ol class="steps">
+      <li>点击上方按钮，Mac 弹出「脚本编辑器」并已载入启动脚本</li>
+      <li>按下 <code>⌘R</code>（或点击 ▶︎ 运行）</li>
+      <li>确认弹窗后输入<strong>管理员密码</strong>（用于写入 <code>/etc/hosts</code>）</li>
+      <li>Safari 自动打开 DeepSeek 登录页，显示<strong>邮箱 / Google 登录</strong>表单即成功</li>
+    </ol>
+  </section>
 
-  <h2>打开后怎么做</h2>
-  <ol class="steps">
-    <li>点击上方按钮，Mac 会弹出「脚本编辑器」，里面已载入启动脚本</li>
-    <li>按下 <code>⌘R</code>（或点击工具栏的 ▶︎ 运行）</li>
-    <li>确认弹窗内容后，输入<strong>管理员密码</strong>（用于写入 <code>/etc/hosts</code>）</li>
-    <li>Safari 自动打开 DeepSeek 登录页，显示<strong>邮箱 / Google 登录</strong>表单即成功</li>
-  </ol>
+  <!-- macOS + 其他浏览器：下载 .applescript 文件 -->
+  <section id="sec-mac-other" class="platform">
+    <a class="cta" href="launcher.applescript" download>下载 launcher.applescript</a>
+    <p class="cta-note">若点击后浏览器直接显示文本，请右键链接 → 存储为 / 另存为</p>
+    <ol class="steps">
+      <li>下载 <code>launcher.applescript</code> 后<strong>双击</strong>，会用「脚本编辑器」打开</li>
+      <li>按下 <code>⌘R</code>（或点击 ▶︎ 运行）</li>
+      <li>确认弹窗后输入<strong>管理员密码</strong>（用于写入 <code>/etc/hosts</code>）</li>
+      <li>Safari 自动打开 DeepSeek 登录页，显示<strong>邮箱 / Google 登录</strong>表单即成功</li>
+    </ol>
+  </section>
+
+  <!-- Windows：下载 .bat -->
+  <section id="sec-windows" class="platform">
+    <a class="cta" href="launcher.bat" download>下载 launcher.bat</a>
+    <p class="cta-note">若点击后浏览器直接显示文本，请右键链接 → 目标另存为</p>
+    <ol class="steps">
+      <li>下载 <code>launcher.bat</code> 到任意位置</li>
+      <li>右键该文件 → <strong>以管理员身份运行</strong>（修改 hosts 需要）</li>
+      <li>脚本自动解析海外节点 IP、写入 hosts、检测已安装的浏览器并打开登录页</li>
+      <li>显示<strong>邮箱 / Google 登录</strong>表单即成功</li>
+    </ol>
+    <p style="color:var(--muted);font-size:13px">下载后若被 SmartScreen 提示，选「仍要运行」；脚本内容为纯文本可自行审查。</p>
+  </section>
+
+  <!-- iOS / iPadOS / 其他系统 -->
+  <section id="sec-mobile" class="platform">
+    <div class="warn">
+      <strong>当前设备无法运行启动器。</strong>本工具依赖 macOS 的「脚本编辑器」或 Windows 的批处理，
+      请在 Mac 或 Windows 电脑上访问本页（手机/iPad 不支持）。
+    </div>
+  </section>
+
+  <!-- 无 JS 时的兜底：全部显示 -->
+  <noscript>
+    <section class="platform active">
+      <h2>请选择你的平台</h2>
+      <p><a href="{{APPLESCRIPT_URL}}">macOS + Safari：直接打开脚本编辑器</a></p>
+      <p><a href="launcher.applescript" download>macOS 其他浏览器：下载 launcher.applescript</a></p>
+      <p><a href="launcher.bat" download>Windows：下载 launcher.bat</a></p>
+    </section>
+  </noscript>
 
   <div class="warn">
     <strong>前提条件：</strong>网络必须能把到海外节点的流量送到非中国大陆出口（专线分流、海外代理，或人就在海外）。
@@ -52,22 +99,25 @@
   </div>
 
   <h2>还原</h2>
-  <p>脚本会向 <code>/etc/hosts</code> 写入一行指向海外节点的记录（全系统生效）。测试完成后在终端执行：</p>
+  <p>启动器会向 hosts 文件写入一行指向海外节点的记录（全系统生效）。测试完成后：</p>
+  <p>macOS 终端执行：</p>
   <pre>sudo sed -i '' '/platform.deepseek.com/d' /etc/hosts</pre>
+  <p>Windows 用记事本（管理员）打开 <code>C:\Windows\System32\drivers\etc\hosts</code>，删除包含 <code>platform.deepseek.com</code> 的行。</p>
 
-  <h2>手动方案（按钮无效时）</h2>
+  <h2>手动方案（自动方式无效时）</h2>
   <details>
-    <summary>复制脚本源码，在脚本编辑器中手动运行</summary>
+    <summary>macOS：复制脚本源码，在脚本编辑器中手动运行</summary>
     <pre id="script-source">{{APPLESCRIPT_SOURCE}}</pre>
     <button class="copy-btn" onclick="copyScript()">复制脚本</button>
     <p style="color:var(--muted);font-size:13px">打开「脚本编辑器」（Spotlight 搜索 Script Editor）→ 粘贴 → ⌘S 保存为应用程序或直接在编辑器内 ⌘R 运行。</p>
   </details>
 
   <h2>常见问题</h2>
-  <details><summary>这个脚本安全吗？</summary><p>脚本源码完全公开（见上方手动方案），只做三件事：解析 CloudFront 当前 IP、向 /etc/hosts 追加一行、打开 Safari 登录页。没有任何数据上报。你可以逐行审查后再运行。</p></details>
-  <details><summary>还是显示 +86 手机号登录？</summary><p>说明请求到 DeepSeek 时用的仍是中国大陆出口 IP。检查网络是否具备海外出口；或重新运行一次脚本（CloudFront IP 可能已更换）。</p></details>
+  <details><summary>脚本安全吗？</summary><p>macOS 的 <code>launcher.applescript</code> 和 Windows 的 <code>launcher.bat</code> 源码完全公开（见仓库），只做三件事：解析 CloudFront 当前海外 IP、向 hosts 追加一行、打开浏览器登录页。没有任何数据上报，可逐行审查。</p></details>
+  <details><summary>脚本编辑器打开是空的？</summary><p>请确认是用 Safari 打开本页并点击按钮。旧版本页面使用了错误大小写的 <code>applescript://</code> 地址会导致空白文档，当前版本已修复；若仍为空，请改用「下载 launcher.applescript」方式。</p></details>
+  <details><summary>还是显示 +86 手机号登录？</summary><p>说明请求到 DeepSeek 时用的仍是中国大陆出口 IP。检查网络是否具备海外出口；或重新运行一次启动器（CloudFront IP 可能已更换）。</p></details>
   <details><summary>页面提示 Request blocked / 403？</summary><p>海外机房 IP 偶尔会被 AWS WAF 拦截，刷新重试即可；多次失败可稍后或换网络环境重试。</p></details>
-  <details><summary>能不用管理员密码吗？</summary><p>不能。修改 /etc/hosts 需要 root 权限，这是 macOS 的系统限制，脚本本身不存储任何密码。</p></details>
+  <details><summary>macOS 能不用管理员密码吗？</summary><p>不能。修改 /etc/hosts 需要 root 权限，这是系统限制，脚本不存储任何密码。</p></details>
 
   <footer>
     源码与问题反馈：<a href="https://github.com/safumo/deepseek-email-login-launcher">github.com/safumo/deepseek-email-login-launcher</a>
@@ -82,6 +132,24 @@
       setTimeout(function () { btn.textContent = '复制脚本'; }, 2000);
     });
   }
+
+  // 平台与浏览器检测：Safari+macOS 用 applescript:// 直启，其他浏览器/系统给下载入口
+  (function () {
+    var ua = navigator.userAgent;
+    var isMac = /Macintosh|Mac OS X/.test(ua) && !/Mobile/.test(ua);
+    var isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    var isWin = /Windows NT/.test(ua);
+    var isSafari = /Safari\//.test(ua) && !/Chrome|Chromium|Edg\/|OPR\/|Firefox|Android|Mobile/.test(ua);
+
+    var id = null;
+    if (isIOS) id = 'sec-mobile';
+    else if (isMac) id = isSafari ? 'sec-mac-safari' : 'sec-mac-other';
+    else if (isWin) id = 'sec-windows';
+    else id = 'sec-mobile';
+
+    var el = document.getElementById(id);
+    if (el) el.classList.add('active');
+  })();
 </script>
 </body>
 </html>

@@ -16,5 +16,6 @@ jobs:
       - run: python build.py
       - name: Verify baked output
         run: |
-          grep -q 'href="applescript://com.apple.ScriptEditor2?action=new&script=' dist/index.html
+          grep -q 'href="applescript://com.apple.scripteditor?action=new&script=' dist/index.html
+          grep -q 'href="launcher.bat" download' dist/index.html
           ! grep -q '{{APPLESCRIPT' dist/index.html

@@ -4,9 +4,11 @@ GitHub Pages 静态站点：引导 macOS 用户通过 `applescript://` URL 直�
 
 ## 工作原理
 
-1. `launcher.applescript` 是本仓库唯一的脚本源：动态解析 CloudFront 当前 IP → 写入 `/etc/hosts` → 打开 Safari 登录页。
-2. `build.py` 把脚本 URL 编码为 `applescript://com.apple.ScriptEditor2?action=new&script=...`，烘焙进 `site/index.html` 生成 `dist/index.html`。
+1. `launcher.applescript` / `launcher.bat` 是脚本源：动态解析 CloudFront 当前 IP → 写入 hosts → 打开浏览器登录页。
+2. `build.py` 把 AppleScript URL 编码为 `applescript://com.apple.scripteditor?action=new&script=...`，烘焙进 `site/index.html` 生成 `dist/index.html`，并把两个启动器文件拷入 `dist/` 供下载。
 3. GitHub Actions（`.github/workflows/pages.yml`）在 push 到 `main` 时构建并部署到 GitHub Pages。
+
+注意：`applescript://` 的 host **必须全小写** `com.apple.scripteditor`——Script Editor 对 host 做大小写敏感匹配，写成 Bundle ID 形式的 `com.apple.ScriptEditor2` 会打开空白文档。
 
 ## 本地开发
 
@@ -23,15 +25,20 @@ python3 -m http.server -d dist 8000   # 本地预览 http://localhost:8000
 
 ## 使用条件
 
-- macOS（Script Editor 为系统自带）
+- **macOS**：Script Editor 为系统自带；任意浏览器可用——Safari 点按钮直启，其他浏览器下载 `launcher.applescript` 双击运行
+- **Windows**：下载 `launcher.bat`，右键「以管理员身份运行」；脚本自动检测 Chrome / Edge / Firefox
 - 网络能把到海外节点的流量送到**非中国大陆出口**（专线分流 / 海外代理 / 人在海外）
-- 运行脚本需输入管理员密码（修改 `/etc/hosts` 需要 root）
+- 运行需管理员密码（修改 hosts 需要 root）
 
 ## 还原
+
+macOS：
 
 ```sh
 sudo sed -i '' '/platform.deepseek.com/d' /etc/hosts
 ```
+
+Windows：用记事本（管理员）打开 `C:\Windows\System32\drivers\etc\hosts`，删除包含 `platform.deepseek.com` 的行。
 
 ## 局限性与风险
 
